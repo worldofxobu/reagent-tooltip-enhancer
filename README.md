@@ -89,25 +89,6 @@ To capture Lua errors while testing, run:
 
 Please include the first complete error and your client build in a [bug report](../../issues/new?template=bug-report.yml).
 
-## Development
-
-The addon has no runtime dependencies. Run the scanner-to-tooltip and options smoke tests with a standalone Lua interpreter:
-
-```sh
-lua tests/smoke.lua
-lua tests/options_smoke.lua
-```
-
-The code is written for WoW's Lua environment. A standalone Lua interpreter is useful for the smoke test but cannot reproduce every client API behavior.
-
-## Releasing
-
-Update the version in `ReagentTooltipEnhancer/ReagentTooltipEnhancer.toc` and add a dated entry to `CHANGELOG.md` before tagging a release. Run both smoke tests and Lua syntax checks, then push the release commit and its matching tag (for example, `v0.2.1`) to GitHub and publish a GitHub release with the installable addon ZIP.
-
-CurseForge is configured to package tagged commits. An active GitHub push webhook pointing to the project's CurseForge packaging endpoint is also required, as described in [Automatic Packaging](https://support.curseforge.com/support/solutions/articles/9000197281-automatic-packaging). Keep its token in the webhook configuration, outside the repository. Pushing a stable tag triggers packaging as a release; tags containing `alpha` or `beta` select those release types. Publishing a GitHub release alone does not replace the tag push.
-
-The root `.pkgmeta` sets the addon folder name, moves the repository's addon subdirectory into the installable ZIP root, excludes tests and contributor documentation, and supplies the changelog and license. Check the webhook delivery and the [CurseForge files page](https://www.curseforge.com/wow/addons/reagent-tooltip-enhancer/files) after pushing a tag to verify that packaging completed.
-
 ## Contributing
 
 Bug reports and focused pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) before contributing.
