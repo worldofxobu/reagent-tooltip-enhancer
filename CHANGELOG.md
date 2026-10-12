@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-12
+
 ### Added
 
 - Per-character profession filters in the addon settings.
@@ -23,5 +25,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Native options panel and `/rte` commands.
 - Standalone scanner-to-tooltip smoke test.
 
-[Unreleased]: https://github.com/worldofxobu/reagent-tooltip-enhancer/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/worldofxobu/reagent-tooltip-enhancer/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/worldofxobu/reagent-tooltip-enhancer/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/worldofxobu/reagent-tooltip-enhancer/releases/tag/v0.1.0
