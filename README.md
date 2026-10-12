@@ -108,8 +108,6 @@ CurseForge is configured to package tagged commits. An active GitHub push webhoo
 
 The root `.pkgmeta` sets the addon folder name, moves the repository's addon subdirectory into the installable ZIP root, excludes tests and contributor documentation, and supplies the changelog and license. Check the webhook delivery and the [CurseForge files page](https://www.curseforge.com/wow/addons/reagent-tooltip-enhancer/files) after pushing a tag to verify that packaging completed.
 
-The release configuration does not sync the README to the CurseForge project description. Update that description separately when user-facing documentation changes.
-
 ## Contributing
 
 Bug reports and focused pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) before contributing.
