@@ -177,11 +177,16 @@ function RTE:ScanCurrentProfession(manual)
         return false
     end
 
-    local oldCount = 0
+    local addedCount = 0
+    for recipeID in pairs(scannedRecipes) do
+        if not self.charDB.recipes[recipeID] then
+            addedCount = addedCount + 1
+        end
+    end
+
     for recipeID, recipe in pairs(self.charDB.recipes) do
         if recipe.professionKey == professionKey then
             self.charDB.recipes[recipeID] = nil
-            oldCount = oldCount + 1
         end
     end
     for recipeID, recipe in pairs(scannedRecipes) do
@@ -198,8 +203,8 @@ function RTE:ScanCurrentProfession(manual)
 
     self:RebuildRecipeIndex()
 
-    if manual or oldCount ~= recipeCount then
-        self:Print("Indexed %d known %s recipes.", recipeCount, professionName)
+    if addedCount > 0 then
+        self:Print("Added %d new %s recipes to the index.", addedCount, professionName)
     end
     if self.RefreshOptions then
         self:RefreshOptions()

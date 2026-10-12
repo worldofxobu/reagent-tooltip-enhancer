@@ -26,7 +26,9 @@ The current release targets:
 
 ## Installation
 
-1. Download the latest release and extract it.
+Download the addon from [CurseForge](https://www.curseforge.com/wow/addons/reagent-tooltip-enhancer) or [GitHub Releases](https://github.com/worldofxobu/reagent-tooltip-enhancer/releases/latest).
+
+1. Download the latest addon ZIP and extract it.
 2. Copy the `ReagentTooltipEnhancer` directory into the Forever client's `Interface/AddOns` directory.
 3. Restart the client, or run `/reload` if the addon was already installed when the client started.
 4. Enable **Reagent Tooltip Enhancer** on the character-selection AddOns screen.
@@ -92,6 +94,14 @@ lua tests/smoke.lua
 ```
 
 The code is written for WoW's Lua environment. A standalone Lua interpreter is useful for the smoke test but cannot reproduce every client API behavior.
+
+## Releasing
+
+Update the version in `ReagentTooltipEnhancer/ReagentTooltipEnhancer.toc` and add a dated entry to `CHANGELOG.md` before tagging a release. Run both smoke tests and Lua syntax checks, then push the release commit and its matching tag (for example, `v0.2.1`) to GitHub and publish a GitHub release with the installable addon ZIP.
+
+CurseForge is configured to package tagged commits. An active GitHub push webhook pointing to the project's CurseForge packaging endpoint is also required, as described in [Automatic Packaging](https://support.curseforge.com/support/solutions/articles/9000197281-automatic-packaging). Keep its token in the webhook configuration, outside the repository. Pushing a stable tag triggers packaging as a release; tags containing `alpha` or `beta` select those release types. Publishing a GitHub release alone does not replace the tag push.
+
+The root `.pkgmeta` sets the addon folder name, moves the repository's addon subdirectory into the installable ZIP root, excludes tests and contributor documentation, and supplies the changelog and license. Check the webhook delivery and the [CurseForge files page](https://www.curseforge.com/wow/addons/reagent-tooltip-enhancer/files) after pushing a tag to verify that packaging completed.
 
 ## Contributing
 

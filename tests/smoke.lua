@@ -32,7 +32,10 @@ function time()
     return 123456
 end
 
-DEFAULT_CHAT_FRAME = { AddMessage = function() end }
+local messages = {}
+DEFAULT_CHAT_FRAME = { AddMessage = function(_, message)
+    messages[#messages + 1] = message
+end }
 
 function CreateFrame()
     local frame = { events = {} }
@@ -110,8 +113,28 @@ assert(loadfile("ReagentTooltipEnhancer/Tooltip.lua"))("ReagentTooltipEnhancer",
 
 frames[1].OnEvent(frames[1], "ADDON_LOADED", "ReagentTooltipEnhancer")
 assert(tooltipCallback, "tooltip callback was not registered")
+wipe(messages)
 assert(namespace:ScanCurrentProfession(false), "profession scan failed")
 assert(namespace.recipeIndex[769], "reagent index was not created")
+assert(#messages == 1 and messages[1]:find("Added 1 new Cooking recipes", 1, true),
+    "initial scan did not announce the added recipe")
+wipe(messages)
+assert(namespace:ScanCurrentProfession(false), "repeat scan failed")
+assert(namespace:ScanCurrentProfession(true), "manual repeat scan failed")
+assert(#messages == 0, "unchanged scans printed a message")
+
+C_TradeSkillUI.GetAllRecipeIDs = function() return { 2540, 2541 } end
+assert(namespace:ScanCurrentProfession(false), "scan with a new recipe failed")
+assert(#messages == 1 and messages[1]:find("Added 1 new Cooking recipes", 1, true),
+    "scan did not report only the newly added recipe")
+wipe(messages)
+C_TradeSkillUI.GetAllRecipeIDs = function() return { 2540 } end
+assert(namespace:ScanCurrentProfession(false), "scan with a removed recipe failed")
+assert(#messages == 0, "removing a recipe printed an addition message")
+C_TradeSkillUI.GetAllRecipeIDs = function() return { 2541 } end
+assert(namespace:ScanCurrentProfession(false), "replacement recipe scan failed")
+assert(#messages == 1 and messages[1]:find("Added 1 new Cooking recipes", 1, true),
+    "same-count replacement did not announce the new recipe")
 
 local function CreateMockTooltip(name)
     local tooltip = { lines = {}, name = name }

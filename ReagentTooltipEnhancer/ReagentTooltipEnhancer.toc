@@ -2,7 +2,7 @@
 ## Title: Reagent Tooltip Enhancer
 ## Notes: Shows which of your known recipes use the item under the cursor.
 ## Author: Xobu
-## Version: 0.2.0
+## Version: 0.2.1
 ## SavedVariables: ReagentTooltipEnhancerDB
 
 Core.lua

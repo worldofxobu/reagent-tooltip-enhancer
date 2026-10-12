@@ -1,0 +1,17 @@
+package-as: ReagentTooltipEnhancer
+enable-nolib-creation: no
+
+# The repository keeps addon files in a subdirectory. Flatten it in the ZIP.
+move-folders:
+    ReagentTooltipEnhancer/ReagentTooltipEnhancer: ReagentTooltipEnhancer
+
+ignore:
+    - tests
+    - README.md
+    - CONTRIBUTING.md
+
+manual-changelog:
+    filename: CHANGELOG.md
+    markup-type: markdown
+
+license-output: LICENSE

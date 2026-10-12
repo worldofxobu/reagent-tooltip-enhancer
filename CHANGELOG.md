@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-12
+
+### Added
+
+- CurseForge project link and release instructions in the README.
+- CurseForge packaging configuration for the installable addon folder, changelog, and license.
+
+### Fixed
+
+- Recipe scans only announce newly added recipes and report the number added. Repeated scans, including manual scans, stay quiet when no recipes are added.
+
 ## [0.2.0] - 2026-10-12
 
 ### Added
@@ -25,6 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Native options panel and `/rte` commands.
 - Standalone scanner-to-tooltip smoke test.
 
-[Unreleased]: https://github.com/worldofxobu/reagent-tooltip-enhancer/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/worldofxobu/reagent-tooltip-enhancer/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/worldofxobu/reagent-tooltip-enhancer/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/worldofxobu/reagent-tooltip-enhancer/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/worldofxobu/reagent-tooltip-enhancer/releases/tag/v0.1.0
