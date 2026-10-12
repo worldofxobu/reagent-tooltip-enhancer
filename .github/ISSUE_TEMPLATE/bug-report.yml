@@ -1,0 +1,54 @@
+name: Bug report
+description: Report a reproducible addon problem or Lua error.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report a problem.
+  - type: input
+    id: client
+    attributes:
+      label: Forever client build
+      description: Include version, build, and interface number if possible.
+      placeholder: 1.60.1, build 70338, interface 16001
+    validations:
+      required: true
+  - type: input
+    id: addon
+    attributes:
+      label: Addon version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the item, profession, expected result, and actual result.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Open Cooking
+        2. Hover Chunk of Boar Meat
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Lua error
+      description: Paste the first complete error. Remove any private information.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks performed
+      options:
+        - label: I opened the relevant profession and ran `/rte scan`.
+        - label: I checked whether the issue occurs with other addons disabled.

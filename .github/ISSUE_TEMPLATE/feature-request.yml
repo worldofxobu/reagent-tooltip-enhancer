@@ -1,0 +1,25 @@
+name: Feature request
+description: Suggest a focused improvement to the addon.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What would this improvement help you do?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested behavior
+      description: Explain how it should look or work in the tooltip or settings.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional—describe any workarounds or alternative designs.

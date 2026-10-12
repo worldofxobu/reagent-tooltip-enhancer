@@ -1,0 +1,11 @@
+## Interface: 16001
+## Title: Reagent Tooltip Enhancer
+## Notes: Shows which of your known recipes use the item under the cursor.
+## Author: Xobu
+## Version: 0.1.0
+## SavedVariables: ReagentTooltipEnhancerDB
+
+Core.lua
+Scanner.lua
+Tooltip.lua
+Options.lua
