@@ -113,37 +113,42 @@ assert(tooltipCallback, "tooltip callback was not registered")
 assert(namespace:ScanCurrentProfession(false), "profession scan failed")
 assert(namespace.recipeIndex[769], "reagent index was not created")
 
-local tooltip = { lines = {} }
-function tooltip:GetName()
-    return "RTESmokeTooltip"
+local function CreateMockTooltip(name)
+    local tooltip = { lines = {}, name = name }
+    function tooltip:GetName()
+        return self.name
+    end
+    function tooltip:NumLines()
+        return #self.lines
+    end
+    function tooltip:GetItem()
+        return "Chunk of Boar Meat", "item:769"
+    end
+    function tooltip:AddLine(left)
+        self.lines[#self.lines + 1] = { left = left }
+        local line = self.lines[#self.lines]
+        _G[self:GetName() .. "TextLeft" .. #self.lines] = {
+            GetText = function()
+                return line.left
+            end,
+        }
+    end
+    function tooltip:AddDoubleLine(left, right)
+        self.lines[#self.lines + 1] = { left = left, right = right }
+        local line = self.lines[#self.lines]
+        _G[self:GetName() .. "TextLeft" .. #self.lines] = {
+            GetText = function()
+                return line.left
+            end,
+        }
+    end
+    function tooltip:Show()
+        self.shown = true
+    end
+    return tooltip
 end
-function tooltip:NumLines()
-    return #self.lines
-end
-function tooltip:GetItem()
-    return "Chunk of Boar Meat", "item:769"
-end
-function tooltip:AddLine(left)
-    self.lines[#self.lines + 1] = { left = left }
-    local line = self.lines[#self.lines]
-    _G[self:GetName() .. "TextLeft" .. #self.lines] = {
-        GetText = function()
-            return line.left
-        end,
-    }
-end
-function tooltip:AddDoubleLine(left, right)
-    self.lines[#self.lines + 1] = { left = left, right = right }
-    local line = self.lines[#self.lines]
-    _G[self:GetName() .. "TextLeft" .. #self.lines] = {
-        GetText = function()
-            return line.left
-        end,
-    }
-end
-function tooltip:Show()
-    self.shown = true
-end
+
+local tooltip = CreateMockTooltip("RTESmokeTooltip")
 
 tooltipCallback(tooltip, { id = 769 })
 
@@ -158,5 +163,11 @@ assert(output:find("Cooking", 1, true), "profession heading is missing")
 assert(output:find("Roasted Boar Meat", 1, true), "recipe is missing")
 assert(output:find("Restores health", 1, true), "effect summary is missing")
 assert(tooltip.shown, "tooltip was not refreshed")
+
+namespace.charDB.professionVisibility["185"] = false
+local filteredTooltip = CreateMockTooltip("RTEFilteredTooltip")
+tooltipCallback(filteredTooltip, { id = 769 })
+assert(#filteredTooltip.lines == 0, "excluded profession still appeared in the tooltip")
+assert(not filteredTooltip.shown, "excluded profession refreshed the tooltip")
 
 print("RTE smoke test passed")

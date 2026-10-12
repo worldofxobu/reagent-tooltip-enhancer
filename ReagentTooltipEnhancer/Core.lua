@@ -2,7 +2,7 @@ local ADDON_NAME, RTE = ...
 
 RTE.ADDON_NAME = ADDON_NAME
 RTE.DISPLAY_NAME = "Reagent Tooltip Enhancer"
-RTE.VERSION = "0.1.0"
+RTE.VERSION = "0.2.0"
 
 local DEFAULT_SETTINGS = {
     enabled = true,
@@ -70,6 +70,29 @@ function RTE:CountCachedRecipes()
     return recipeCount, professionCount
 end
 
+function RTE:IsProfessionEnabled(professionKey)
+    if not self.charDB or type(self.charDB.professionVisibility) ~= "table" then
+        return true
+    end
+    return self.charDB.professionVisibility[professionKey] ~= false
+end
+
+function RTE:CountIncludedProfessions()
+    local included = 0
+    local total = 0
+
+    if self.charDB and self.charDB.professions then
+        for professionKey in pairs(self.charDB.professions) do
+            total = total + 1
+            if self:IsProfessionEnabled(professionKey) then
+                included = included + 1
+            end
+        end
+    end
+
+    return included, total
+end
+
 function RTE:InitializeDatabase()
     if type(ReagentTooltipEnhancerDB) ~= "table" then
         ReagentTooltipEnhancerDB = {}
@@ -89,6 +112,9 @@ function RTE:InitializeDatabase()
     local character = database.characters[characterKey]
     character.recipes = type(character.recipes) == "table" and character.recipes or {}
     character.professions = type(character.professions) == "table" and character.professions or {}
+    character.professionVisibility = type(character.professionVisibility) == "table"
+        and character.professionVisibility
+        or {}
 
     self.db = database
     self.settings = database.settings

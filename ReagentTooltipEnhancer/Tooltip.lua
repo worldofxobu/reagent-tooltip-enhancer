@@ -193,9 +193,18 @@ function RTE:TooltipInitialize()
         end
 
         local itemID = GetTooltipItemID(tooltip, tooltipData)
-        local recipes = itemID and RTE.recipeIndex[itemID]
-        if recipes and #recipes > 0 then
-            pcall(RTE.AddRecipeSection, RTE, tooltip, itemID, recipes)
+        local indexedRecipes = itemID and RTE.recipeIndex[itemID]
+        if indexedRecipes and #indexedRecipes > 0 then
+            local visibleRecipes = {}
+            for _, recipe in ipairs(indexedRecipes) do
+                if RTE:IsProfessionEnabled(recipe.professionKey) then
+                    visibleRecipes[#visibleRecipes + 1] = recipe
+                end
+            end
+
+            if #visibleRecipes > 0 then
+                pcall(RTE.AddRecipeSection, RTE, tooltip, itemID, visibleRecipes)
+            end
         end
     end)
 end

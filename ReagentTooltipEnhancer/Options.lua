@@ -1,6 +1,7 @@
 local _, RTE = ...
 
 local controls = {}
+local professionControls = {}
 
 local function SetCheckboxText(checkbox, text)
     if checkbox.Text then
@@ -67,6 +68,114 @@ local function CreateStepper(panel, key, label, minimum, maximum, step, anchor)
     return row
 end
 
+local function GetSortedProfessions()
+    local professions = {}
+
+    if RTE.charDB and RTE.charDB.professions then
+        for professionKey, profession in pairs(RTE.charDB.professions) do
+            professions[#professions + 1] = {
+                key = professionKey,
+                name = profession.name or "Profession",
+                recipeCount = profession.recipeCount or 0,
+            }
+        end
+    end
+
+    table.sort(professions, function(left, right)
+        return left.name < right.name
+    end)
+    return professions
+end
+
+local function CreateProfessionFilter(panel, anchor)
+    local frame = CreateFrame("Frame", nil, panel)
+    frame:SetSize(540, 68)
+    frame:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -22)
+
+    local title = frame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    title:SetPoint("TOPLEFT", 0, 0)
+    title:SetText("Included professions")
+
+    local subtitle = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    subtitle:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -5)
+    subtitle:SetText("Choose which of this character's discovered professions appear in tooltips.")
+
+    local includeAll = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    includeAll:SetSize(88, 22)
+    includeAll:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -94, 3)
+    includeAll:SetText("Include all")
+    includeAll:SetScript("OnClick", function()
+        for professionKey in pairs(RTE.charDB.professions) do
+            RTE.charDB.professionVisibility[professionKey] = true
+        end
+        RTE:RefreshOptions()
+    end)
+
+    local excludeAll = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    excludeAll:SetSize(88, 22)
+    excludeAll:SetPoint("LEFT", includeAll, "RIGHT", 6, 0)
+    excludeAll:SetText("Exclude all")
+    excludeAll:SetScript("OnClick", function()
+        for professionKey in pairs(RTE.charDB.professions) do
+            RTE.charDB.professionVisibility[professionKey] = false
+        end
+        RTE:RefreshOptions()
+    end)
+
+    local emptyText = frame:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
+    emptyText:SetPoint("TOPLEFT", subtitle, "BOTTOMLEFT", 4, -10)
+    emptyText:SetText("No professions discovered yet. Open a profession window to add it here.")
+
+    frame.emptyText = emptyText
+    frame.includeAll = includeAll
+    frame.excludeAll = excludeAll
+    return frame
+end
+
+function RTE:RefreshProfessionControls()
+    local frame = self.professionFilterFrame
+    if not frame then
+        return
+    end
+
+    local professions = GetSortedProfessions()
+    for index, profession in ipairs(professions) do
+        local checkbox = professionControls[index]
+        if not checkbox then
+            checkbox = CreateFrame(
+                "CheckButton",
+                "RTEProfessionFilter" .. index,
+                frame,
+                "InterfaceOptionsCheckButtonTemplate"
+            )
+            checkbox:SetScript("OnClick", function(control)
+                RTE.charDB.professionVisibility[control.professionKey] = control:GetChecked() and true or false
+                RTE:RefreshOptions()
+            end)
+            professionControls[index] = checkbox
+        end
+
+        checkbox:ClearAllPoints()
+        checkbox:SetPoint("TOPLEFT", frame, "TOPLEFT", 4, -42 - ((index - 1) * 24))
+        checkbox.professionKey = profession.key
+        checkbox.tooltipText = profession.name
+        checkbox.tooltipRequirement = "Include recipes from this profession in reagent tooltips."
+        SetCheckboxText(checkbox, string.format("%s  |cff888888(%d recipes)|r", profession.name, profession.recipeCount))
+        checkbox:SetChecked(self:IsProfessionEnabled(profession.key))
+        checkbox:Show()
+    end
+
+    for index = #professions + 1, #professionControls do
+        professionControls[index]:Hide()
+    end
+
+    local hasProfessions = #professions > 0
+    frame.emptyText:SetShown(not hasProfessions)
+    frame.includeAll:SetEnabled(hasProfessions)
+    frame.excludeAll:SetEnabled(hasProfessions)
+    frame:SetHeight(hasProfessions and (48 + (#professions * 24)) or 68)
+end
+
 function RTE:RefreshOptions()
     for _, control in ipairs(controls) do
         if control.SetChecked then
@@ -76,12 +185,16 @@ function RTE:RefreshOptions()
         end
     end
 
+    self:RefreshProfessionControls()
+
     if self.optionsStatus then
         local recipes, professions = self:CountCachedRecipes()
+        local included = self:CountIncludedProfessions()
         self.optionsStatus:SetText(string.format(
-            "Cached for this character: %d recipes from %d professions",
+            "Cached for this character: %d recipes from %d professions (%d included)",
             recipes,
-            professions
+            professions,
+            included
         ))
     end
 end
@@ -161,7 +274,10 @@ function RTE:CreateOptionsPanel()
         itemLevel
     )
 
-    local maximum = CreateStepper(panel, "maxRecipes", "Maximum recipes shown", 1, 20, 1, effects)
+    local professionFilter = CreateProfessionFilter(panel, effects)
+    self.professionFilterFrame = professionFilter
+
+    local maximum = CreateStepper(panel, "maxRecipes", "Maximum recipes shown", 1, 20, 1, professionFilter)
     local effectLength = CreateStepper(panel, "effectMaxLength", "Maximum effect-text length", 40, 160, 8, maximum)
 
     local status = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")

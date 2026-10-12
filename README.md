@@ -13,6 +13,7 @@ Hover Chunk of Boar Meat to see the Cooking recipes that consume it, or hover a 
 - Includes shortened food or recipe-effect text when the tooltip remains compact.
 - Limits large result sets and reports how many additional recipes matched.
 - Caches recipes per character and updates when recipes are learned.
+- Lets each character include or exclude individual discovered professions.
 - Provides configurable display options without external libraries.
 
 ## Compatibility
@@ -49,6 +50,7 @@ Enter `/rte` to open the addon settings. The following can be configured:
 - Show required reagent quantity.
 - Show crafted item level when available.
 - Show shortened recipe or food-effect text.
+- Choose which of the current character's discovered professions are included.
 - Set the maximum number of recipes and effect-text length.
 
 Effect descriptions are shown only when three or fewer recipes match, preventing common reagents from producing excessively large tooltips.
