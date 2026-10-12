@@ -39,6 +39,8 @@ The exact Forever game-directory name may differ during beta.
 
 Open each profession window once after installing the addon. WoW exposes the complete recipe list only while that profession is loaded, so this lets the addon build its item-to-recipe index. New recipes are detected automatically.
 
+Scans report how many new recipes were added and stay quiet when no new recipes are found, including when you run `/rte scan` manually.
+
 Afterward, hover a reagent used by one of your known recipes.
 
 ## Configuration
@@ -54,6 +56,8 @@ Enter `/rte` to open the addon settings. The following can be configured:
 - Show shortened recipe or food-effect text.
 - Choose which of the current character's discovered professions are included.
 - Set the maximum number of recipes and effect-text length.
+
+Use **Include all** or **Exclude all** to toggle all discovered professions for the current character.
 
 Effect descriptions are shown only when three or fewer recipes match, preventing common reagents from producing excessively large tooltips.
 
@@ -87,10 +91,11 @@ Please include the first complete error and your client build in a [bug report](
 
 ## Development
 
-The addon has no runtime dependencies. Its core scanner-to-tooltip path has a small Lua smoke test:
+The addon has no runtime dependencies. Run the scanner-to-tooltip and options smoke tests with a standalone Lua interpreter:
 
 ```sh
 lua tests/smoke.lua
+lua tests/options_smoke.lua
 ```
 
 The code is written for WoW's Lua environment. A standalone Lua interpreter is useful for the smoke test but cannot reproduce every client API behavior.
@@ -102,6 +107,8 @@ Update the version in `ReagentTooltipEnhancer/ReagentTooltipEnhancer.toc` and ad
 CurseForge is configured to package tagged commits. An active GitHub push webhook pointing to the project's CurseForge packaging endpoint is also required, as described in [Automatic Packaging](https://support.curseforge.com/support/solutions/articles/9000197281-automatic-packaging). Keep its token in the webhook configuration, outside the repository. Pushing a stable tag triggers packaging as a release; tags containing `alpha` or `beta` select those release types. Publishing a GitHub release alone does not replace the tag push.
 
 The root `.pkgmeta` sets the addon folder name, moves the repository's addon subdirectory into the installable ZIP root, excludes tests and contributor documentation, and supplies the changelog and license. Check the webhook delivery and the [CurseForge files page](https://www.curseforge.com/wow/addons/reagent-tooltip-enhancer/files) after pushing a tag to verify that packaging completed.
+
+The release configuration does not sync the README to the CurseForge project description. Update that description separately when user-facing documentation changes.
 
 ## Contributing
 
