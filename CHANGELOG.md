@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-31
+
 ### Added
 
 - Support for WoW Classic Era (1.15.x) using legacy trade skill and craft fallbacks and classic tooltip hooks.
@@ -41,7 +43,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Native options panel and `/rte` commands.
 - Standalone scanner-to-tooltip smoke test.
 
-[Unreleased]: https://github.com/worldofxobu/reagent-tooltip-enhancer/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/worldofxobu/reagent-tooltip-enhancer/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/worldofxobu/reagent-tooltip-enhancer/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/worldofxobu/reagent-tooltip-enhancer/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/worldofxobu/reagent-tooltip-enhancer/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/worldofxobu/reagent-tooltip-enhancer/releases/tag/v0.1.0
