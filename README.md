@@ -10,6 +10,7 @@ Hover Chunk of Boar Meat to see the Cooking recipes that consume it, or hover a 
 - Lists only recipes learned by the current character.
 - Groups results by profession.
 - Shows profession skill, recipe difficulty, and reagent quantity.
+- Supports both standard trade skills and Classic Era Enchanting.
 - Includes shortened food or recipe-effect text when the tooltip remains compact.
 - Limits large result sets and reports how many additional recipes matched.
 - Caches recipes per character and updates when recipes are learned.
@@ -18,10 +19,10 @@ Hover Chunk of Boar Meat to see the Cooking recipes that consume it, or hover a 
 
 ## Compatibility
 
-The current release targets:
+A single download works seamlessly across both supported clients:
 
-- WoW Forever `1.60.1` (Build `70685`, Interface `16001`)
-- WoW Classic Era `1.15.x` (Interface `11500`–`11509`)
+- **WoW Forever**: `1.60.1` (Build `70685`, Interface `16001`)
+- **WoW Classic Era**: `1.15.x` (Interface `11500`–`11509`)
 
 ## Installation
 
@@ -84,11 +85,11 @@ To capture Lua errors while testing, run:
 /reload
 ```
 
-Please include the first complete error and your client build in a [bug report](../../issues/new?template=bug-report.yml).
+Please include the first complete error and your client build in a [bug report](https://github.com/worldofxobu/reagent-tooltip-enhancer/issues/new?template=bug-report.yml).
 
 ## Contributing
 
-Bug reports and focused pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) before contributing.
+Bug reports and focused pull requests are welcome. See [CONTRIBUTING.md](https://github.com/worldofxobu/reagent-tooltip-enhancer/blob/main/CONTRIBUTING.md) before contributing.
 
 ## Author
 
@@ -96,6 +97,6 @@ Created and maintained by **Xobu**.
 
 ## License
 
-Released under the [MIT License](LICENSE).
+Released under the [MIT License](https://github.com/worldofxobu/reagent-tooltip-enhancer/blob/main/LICENSE).
 
 World of Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment, Inc. This project is not affiliated with or endorsed by Blizzard Entertainment.
