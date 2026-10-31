@@ -12,14 +12,14 @@ body:
     attributes:
       label: Forever client build
       description: Include version, build, and interface number if possible.
-      placeholder: 1.60.1, build 70338, interface 16001
+      placeholder: 1.60.1, build 70685, interface 16001
     validations:
       required: true
   - type: input
     id: addon
     attributes:
       label: Addon version
-      placeholder: 0.2.0
+      placeholder: 0.2.1
     validations:
       required: true
   - type: textarea

@@ -21,7 +21,7 @@ Hover Chunk of Boar Meat to see the Cooking recipes that consume it, or hover a 
 The current release targets:
 
 - WoW Forever `1.60.1`
-- Build `70338`
+- Build `70685`
 - Interface `16001`
 
 ## Installation

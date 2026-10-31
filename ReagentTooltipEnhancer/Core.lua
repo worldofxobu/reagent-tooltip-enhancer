@@ -2,7 +2,7 @@ local ADDON_NAME, RTE = ...
 
 RTE.ADDON_NAME = ADDON_NAME
 RTE.DISPLAY_NAME = "Reagent Tooltip Enhancer"
-RTE.VERSION = "0.2.0"
+RTE.VERSION = "0.2.1"
 
 local DEFAULT_SETTINGS = {
     enabled = true,
