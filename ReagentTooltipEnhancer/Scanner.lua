@@ -103,16 +103,179 @@ function RTE:ClearCache(quiet)
     end
 end
 
-function RTE:ScanCurrentProfession(manual)
+local LEGACY_DIFFICULTY = {
+    optimal = 0,
+    medium = 1,
+    easy = 2,
+    trivial = 3,
+}
+
+local function CommitScannedProfession(self, professionKey, professionName, skillLevel, maxSkillLevel, scannedRecipes, recipeCount)
+    local addedCount = 0
+    for recipeID in pairs(scannedRecipes) do
+        if not self.charDB.recipes[recipeID] then
+            addedCount = addedCount + 1
+        end
+    end
+
+    for recipeID, recipe in pairs(self.charDB.recipes) do
+        if recipe.professionKey == professionKey then
+            self.charDB.recipes[recipeID] = nil
+        end
+    end
+    for recipeID, recipe in pairs(scannedRecipes) do
+        self.charDB.recipes[recipeID] = recipe
+    end
+
+    self.charDB.professions[professionKey] = {
+        name = professionName,
+        skillLevel = skillLevel,
+        maxSkillLevel = maxSkillLevel,
+        recipeCount = recipeCount,
+        lastScan = time(),
+    }
+
+    self:RebuildRecipeIndex()
+
+    if addedCount > 0 then
+        self:Print("Added %d new %s recipes to the index.", addedCount, professionName)
+    end
+    if self.RefreshOptions then
+        self:RefreshOptions()
+    end
+    return true
+end
+
+function RTE:ScanLegacyCraft(manual)
+    if not GetNumCrafts or not GetCraftDisplaySkillLine or not GetCraftInfo then
+        return false
+    end
+
+    local skillName, skillLevel, maxSkillLevel = self:SafeCall(GetCraftDisplaySkillLine)
+    local numCrafts = self:SafeCall(GetNumCrafts) or 0
+
+    if not skillName or skillName == "" or numCrafts == 0 then
+        return false
+    end
+
+    local professionKey = skillName
+    local professionName = skillName
+    local scannedRecipes = {}
+    local recipeCount = 0
+
+    for craftIndex = 1, numCrafts do
+        local craftName, _, craftType = self:SafeCall(GetCraftInfo, craftIndex)
+        if craftName and craftType ~= "header" then
+            local reagents = {}
+            local numReagents = self:SafeCall(GetCraftNumReagents, craftIndex) or 0
+            for reagentIndex = 1, numReagents do
+                local _, _, count = self:SafeCall(GetCraftReagentInfo, craftIndex, reagentIndex)
+                local reagentLink = self:SafeCall(GetCraftReagentItemLink, craftIndex, reagentIndex)
+                local reagentID = reagentLink and tonumber(string.match(reagentLink, "item:(%d+)"))
+                if reagentID then
+                    AddReagent(reagents, reagentID, count or 1)
+                end
+            end
+
+            if next(reagents) then
+                local icon = GetCraftIcon and self:SafeCall(GetCraftIcon, craftIndex) or nil
+                local effect = GetCraftDescription and self:SafeCall(GetCraftDescription, craftIndex) or nil
+                local craftItemLink = GetCraftItemLink and self:SafeCall(GetCraftItemLink, craftIndex) or nil
+                local recipeID = craftItemLink and tonumber(string.match(craftItemLink, ":(%d+)")) or ("craft:" .. craftName)
+
+                scannedRecipes[recipeID] = {
+                    recipeID = recipeID,
+                    name = craftName,
+                    icon = icon,
+                    professionKey = professionKey,
+                    professionName = professionName,
+                    professionSkill = tonumber(skillLevel) or 0,
+                    professionMaxSkill = tonumber(maxSkillLevel) or 0,
+                    difficulty = LEGACY_DIFFICULTY[craftType] or craftType,
+                    effect = effect,
+                    reagents = reagents,
+                }
+                recipeCount = recipeCount + 1
+            end
+        end
+    end
+
+    if recipeCount == 0 then
+        return false
+    end
+
+    return CommitScannedProfession(self, professionKey, professionName, tonumber(skillLevel) or 0, tonumber(maxSkillLevel) or 0, scannedRecipes, recipeCount)
+end
+
+function RTE:ScanLegacyTradeSkill(manual)
+    if not GetNumTradeSkills or not GetTradeSkillLine or not GetTradeSkillInfo then
+        return false
+    end
+
+    local skillName, skillLevel, maxSkillLevel = self:SafeCall(GetTradeSkillLine)
+    local numTradeSkills = self:SafeCall(GetNumTradeSkills) or 0
+
+    if not skillName or skillName == "" or numTradeSkills == 0 then
+        return false
+    end
+
+    local professionKey = skillName
+    local professionName = skillName
+    local scannedRecipes = {}
+    local recipeCount = 0
+
+    for skillIndex = 1, numTradeSkills do
+        local skillInfoName, skillType = self:SafeCall(GetTradeSkillInfo, skillIndex)
+        if skillInfoName and skillType ~= "header" then
+            local reagents = {}
+            local numReagents = self:SafeCall(GetTradeSkillNumReagents, skillIndex) or 0
+            for reagentIndex = 1, numReagents do
+                local _, _, count = self:SafeCall(GetTradeSkillReagentInfo, skillIndex, reagentIndex)
+                local reagentLink = self:SafeCall(GetTradeSkillReagentItemLink, skillIndex, reagentIndex)
+                local reagentID = reagentLink and tonumber(string.match(reagentLink, "item:(%d+)"))
+                if reagentID then
+                    AddReagent(reagents, reagentID, count or 1)
+                end
+            end
+
+            if next(reagents) then
+                local icon = GetTradeSkillIcon and self:SafeCall(GetTradeSkillIcon, skillIndex) or nil
+                local effect = GetTradeSkillDescription and self:SafeCall(GetTradeSkillDescription, skillIndex) or nil
+                local recipeLink = GetTradeSkillRecipeLink and self:SafeCall(GetTradeSkillRecipeLink, skillIndex)
+                    or (GetTradeSkillItemLink and self:SafeCall(GetTradeSkillItemLink, skillIndex))
+                local recipeID = recipeLink and tonumber(string.match(recipeLink, ":(%d+)")) or ("ts:" .. skillInfoName)
+
+                scannedRecipes[recipeID] = {
+                    recipeID = recipeID,
+                    name = skillInfoName,
+                    icon = icon,
+                    professionKey = professionKey,
+                    professionName = professionName,
+                    professionSkill = tonumber(skillLevel) or 0,
+                    professionMaxSkill = tonumber(maxSkillLevel) or 0,
+                    difficulty = LEGACY_DIFFICULTY[skillType] or skillType,
+                    effect = effect,
+                    reagents = reagents,
+                }
+                recipeCount = recipeCount + 1
+            end
+        end
+    end
+
+    if recipeCount == 0 then
+        return false
+    end
+
+    return CommitScannedProfession(self, professionKey, professionName, tonumber(skillLevel) or 0, tonumber(maxSkillLevel) or 0, scannedRecipes, recipeCount)
+end
+
+function RTE:ScanModernProfession(manual)
     if not C_TradeSkillUI
         or not C_TradeSkillUI.GetBaseProfessionInfo
         or not C_TradeSkillUI.GetAllRecipeIDs
         or not C_TradeSkillUI.GetRecipeInfo
         or not C_TradeSkillUI.GetRecipeSchematic then
-        if manual then
-            self:Print("The profession API is not available on this client.")
-        end
-        return false
+        return false, false
     end
 
     local professionInfo = self:SafeCall(C_TradeSkillUI.GetBaseProfessionInfo)
@@ -122,10 +285,7 @@ function RTE:ScanCurrentProfession(manual)
         or not professionInfo.professionName
         or type(recipeIDs) ~= "table"
         or #recipeIDs == 0 then
-        if manual then
-            self:Print("Open a profession window, then run |cffffffff/rte scan|r again.")
-        end
-        return false
+        return false, true
     end
 
     local professionKey = NormalizedProfessionKey(professionInfo)
@@ -167,49 +327,42 @@ function RTE:ScanCurrentProfession(manual)
         end
     end
 
-    -- A profession can briefly report an empty recipe list while its data is
-    -- still arriving. Preserve the last good cache and let the next list-update
-    -- event try again instead of replacing valid data with an empty scan.
     if learnedCount == 0 then
         if manual then
             self:Print("Recipe data is still loading. Try the scan again in a moment.")
         end
-        return false
+        return false, true
     end
 
-    local addedCount = 0
-    for recipeID in pairs(scannedRecipes) do
-        if not self.charDB.recipes[recipeID] then
-            addedCount = addedCount + 1
+    return CommitScannedProfession(self, professionKey, professionName, skillLevel, maxSkillLevel, scannedRecipes, recipeCount), true
+end
+
+function RTE:ScanCurrentProfession(manual)
+    local success, handled = self:ScanModernProfession(manual)
+    if success then
+        return true
+    end
+
+    if GetNumCrafts and (not handled or (GetNumCrafts() or 0) > 0) then
+        if self:ScanLegacyCraft(manual) then
+            return true
         end
     end
 
-    for recipeID, recipe in pairs(self.charDB.recipes) do
-        if recipe.professionKey == professionKey then
-            self.charDB.recipes[recipeID] = nil
+    if GetNumTradeSkills and (not handled or (GetNumTradeSkills() or 0) > 0) then
+        if self:ScanLegacyTradeSkill(manual) then
+            return true
         end
     end
-    for recipeID, recipe in pairs(scannedRecipes) do
-        self.charDB.recipes[recipeID] = recipe
-    end
 
-    self.charDB.professions[professionKey] = {
-        name = professionName,
-        skillLevel = skillLevel,
-        maxSkillLevel = maxSkillLevel,
-        recipeCount = recipeCount,
-        lastScan = time(),
-    }
-
-    self:RebuildRecipeIndex()
-
-    if addedCount > 0 then
-        self:Print("Added %d new %s recipes to the index.", addedCount, professionName)
+    if manual and not handled then
+        if not C_TradeSkillUI and not GetNumTradeSkills and not GetNumCrafts then
+            self:Print("The profession API is not available on this client.")
+        else
+            self:Print("Open a profession window, then run |cffffffff/rte scan|r again.")
+        end
     end
-    if self.RefreshOptions then
-        self:RefreshOptions()
-    end
-    return true
+    return false
 end
 
 function RTE:ScheduleProfessionScan(delay, manual)
@@ -230,9 +383,11 @@ function RTE:ScannerInitialize()
     local scannerFrame = CreateFrame("Frame")
     scannerFrame:RegisterEvent("TRADE_SKILL_SHOW")
     scannerFrame:RegisterEvent("TRADE_SKILL_LIST_UPDATE")
-    scannerFrame:RegisterEvent("NEW_RECIPE_LEARNED")
+    pcall(function() scannerFrame:RegisterEvent("NEW_RECIPE_LEARNED") end)
+    pcall(function() scannerFrame:RegisterEvent("CRAFT_SHOW") end)
+    pcall(function() scannerFrame:RegisterEvent("CRAFT_UPDATE") end)
     scannerFrame:SetScript("OnEvent", function(_, event)
-        local delay = event == "TRADE_SKILL_SHOW" and 0.35 or 0.15
+        local delay = (event == "TRADE_SKILL_SHOW" or event == "CRAFT_SHOW") and 0.35 or 0.15
         RTE:ScheduleProfessionScan(delay, false)
     end)
 

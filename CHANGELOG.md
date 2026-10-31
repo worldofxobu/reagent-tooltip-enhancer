@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Support for WoW Classic Era (1.15.x) using legacy trade skill and craft fallbacks and classic tooltip hooks.
+- Dedicated `ReagentTooltipEnhancer_Vanilla.toc` and `Interface-Vanilla` header for automatic Classic Era client discovery.
+
 ## [0.2.1] - 2026-10-12
 
 ### Added

@@ -1,6 +1,6 @@
 # Reagent Tooltip Enhancer
 
-Reagent Tooltip Enhancer is a lightweight addon for **World of Warcraft: Forever** that shows which of your character's known recipes use the item under the cursor.
+Reagent Tooltip Enhancer is a lightweight addon for **World of Warcraft: Forever** and **WoW Classic Era** that shows which of your character's known recipes use the item under the cursor.
 
 Hover Chunk of Boar Meat to see the Cooking recipes that consume it, or hover a Copper Bar to see matching Blacksmithing and Engineering recipes—without opening every profession window.
 
@@ -20,20 +20,17 @@ Hover Chunk of Boar Meat to see the Cooking recipes that consume it, or hover a 
 
 The current release targets:
 
-- WoW Forever `1.60.1`
-- Build `70685`
-- Interface `16001`
+- WoW Forever `1.60.1` (Build `70685`, Interface `16001`)
+- WoW Classic Era `1.15.x` (Interface `11500`–`11509`)
 
 ## Installation
 
 Download the addon from [CurseForge](https://www.curseforge.com/wow/addons/reagent-tooltip-enhancer) or [GitHub Releases](https://github.com/worldofxobu/reagent-tooltip-enhancer/releases/latest).
 
 1. Download the latest addon ZIP and extract it.
-2. Copy the `ReagentTooltipEnhancer` directory into the Forever client's `Interface/AddOns` directory.
+2. Copy the `ReagentTooltipEnhancer` directory into your client's `Interface/AddOns` directory (`_forever_` or `_classic_era_`).
 3. Restart the client, or run `/reload` if the addon was already installed when the client started.
 4. Enable **Reagent Tooltip Enhancer** on the character-selection AddOns screen.
-
-The exact Forever game-directory name may differ during beta.
 
 ## First-time setup
 

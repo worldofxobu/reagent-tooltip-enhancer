@@ -83,9 +83,9 @@ local function DifficultyText(recipe)
     end
     return string.format(
         "|cff%02x%02x%02x%s|r",
-        difficulty.r * 255,
-        difficulty.g * 255,
-        difficulty.b * 255,
+        math.floor(difficulty.r * 255),
+        math.floor(difficulty.g * 255),
+        math.floor(difficulty.b * 255),
         difficulty.text
     )
 end
@@ -182,12 +182,7 @@ function RTE:AddRecipeSection(tooltip, itemID, recipes)
 end
 
 function RTE:TooltipInitialize()
-    if not TooltipDataProcessor or not Enum or not Enum.TooltipDataType then
-        self:Print("Tooltip API unavailable; the addon could not attach to item tooltips.")
-        return
-    end
-
-    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip, tooltipData)
+    local function ProcessItemTooltip(tooltip, tooltipData)
         if not RTE.settings or not RTE.settings.enabled then
             return
         end
@@ -206,5 +201,22 @@ function RTE:TooltipInitialize()
                 pcall(RTE.AddRecipeSection, RTE, tooltip, itemID, visibleRecipes)
             end
         end
-    end)
+    end
+
+    if TooltipDataProcessor and Enum and Enum.TooltipDataType and TooltipDataProcessor.AddTooltipPostCall then
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, ProcessItemTooltip)
+    elseif GameTooltip and GameTooltip.HookScript then
+        local function HookTooltip(tooltip)
+            if tooltip and tooltip.HookScript then
+                tooltip:HookScript("OnTooltipSetItem", function(self)
+                    ProcessItemTooltip(self)
+                end)
+            end
+        end
+
+        HookTooltip(GameTooltip)
+        HookTooltip(ItemRefTooltip)
+    else
+        self:Print("Tooltip API unavailable; the addon could not attach to item tooltips.")
+    end
 end

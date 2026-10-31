@@ -1,0 +1,11 @@
+## Interface: 11509, 11508, 11507, 11506, 11505, 11504, 11503, 11502, 11501, 11500
+## Title: Reagent Tooltip Enhancer
+## Notes: Shows which of your known recipes use the item under the cursor.
+## Author: Xobu
+## Version: 0.2.1
+## SavedVariables: ReagentTooltipEnhancerDB
+
+Core.lua
+Scanner.lua
+Tooltip.lua
+Options.lua

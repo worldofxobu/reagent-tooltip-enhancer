@@ -1,4 +1,5 @@
-## Interface: 16001
+## Interface: 16001, 11509, 11508, 11507, 11506, 11505, 11504, 11503, 11502, 11501, 11500
+## Interface-Vanilla: 11509, 11508, 11507, 11506, 11505, 11504, 11503, 11502, 11501, 11500
 ## Title: Reagent Tooltip Enhancer
 ## Notes: Shows which of your known recipes use the item under the cursor.
 ## Author: Xobu
